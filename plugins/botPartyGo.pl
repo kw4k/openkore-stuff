@@ -61,6 +61,8 @@ my @offlineCheckList = ();
 -- PARTY CHAT... CHAT --
 	- "I need mana!" if there is a prof in the PARTY
 	- "Mana break please!" if there ISN'T a prof in the PARTY
+ 	# suggestion: just add a class check in party if there is a prof or not
+  
 	- "Heal Me!" queue a heal on this Character
 	- "Where is Party Leader?" <RC map,x,y>
 		-> 'RC' is a response code that we can use to parse party messages
@@ -98,11 +100,43 @@ my @offlineCheckList = ();
 	- Respond to someone asking for party
 		=> need a config to designate this bot / character as the leader of a party
 		=> MSG: Broadcast active party level range
+  	#suggestion  
+   	- we should make a uniform party request code something like
+    
+     	<party_request_code> <level> <role>
+      
+      	party_request_code
+       	- LFP - looking for party (this is for bots looking for a party)
+	- LFM - looking for member (this is for party leaders that are looking for members)
+ 
+ 	level
+  	- for players looking for party, value should be 10-99
+   	- for party leaders looking for members, value should be the lowest level of current party member to the highest level
+    
+    	role
+      	- Kinda hard to generalize roles, but here are some that might do:
+       		- TANK - for tank LKs, Stalker, Taekwon/Taekwon Master, steel body champs, etc.
+	 	- DEVO - yes, devo.
+   		- SUPP - generic role for priests/high priests
+     		- SP-BATT - SE Prof
+     		- DPS-AOE - generic role for Wiz/HWiz, SS Sniper, BB Knight/LK, GC Crusader/Pally
+       		- DPS-ST - generic role for Sniper/Hunter, Bolter Prof, Esma Soul Linkers, Arrow Vulcan Dancer/Minstrel, DPS Whitesmiths, AB Creators, Asura Champs
+	 	- BRAGI - yes, bragi.
+   		- LINKER - support type soul linker. debatable, can go with the DPS-ST role but whatever.
+     	- for players looking for party, they only need to pick one
+      	- for party leaders, needed role should be enclosed in [] or if there are mulitple slots available, just add [ANY]
+       
+      	EXAMPLE/USAGE:  
+       	'LFP 91 DPS-ST' - looking for party, the char is a level 91 with DPS-ST role
+	'LFM 86-99 [SUPP,DEVO,SP-BATT]' - leader looking for the said roles
+ 	'LFM 51-64 [ANY]' - leader looking for any roles
+	
 	- Invite person to party
 		=> RCV: Receive party request, send invite
 	- Broadcast that party is OPEN when there are member slots, can do this on TIMEOUT or at certain times
 
 	~~~ PARTY MEMBER ~~~
+ 	- Player to be invited should be within player list range of leader
 	- Search for party / Ask for peeps online
 		=> need a config to designate this bot / characters as the MEMBER of a party
 		=> MSG: Ask for active parties
@@ -121,10 +155,11 @@ my @offlineCheckList = ();
 	- botPartyGo [1] - enables the plugin
 
 	~~~ PARTY LEADER ~~~
-	- BPG_isPartyLeader [0/1] - designates this character as the leader of a party
-
-	~~~ PARTY MEMBER ~~~
-	- BPG_isPartyMember [0/1] - designates this character as the member of a party
+	- BPG_isPartyLeader [0/1] 
+ 		1 - designates this character as the leader of a party
+   		0 - designates this character as the member of a party
+	#~~~ PARTY MEMBER ~~~
+	#- BPG_isPartyMember [0/1] - designates this character as the member of a party
 
 =cut
 
